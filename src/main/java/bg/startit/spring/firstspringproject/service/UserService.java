@@ -62,7 +62,8 @@ public class UserService implements UserDetailsService {
 
   public User register(String userName, String userPassword, String passConfirmation) {
     if (!userPassword.equals(passConfirmation)) {
-      throw new IllegalArgumentException("The passwords doesn't match");
+      throw new IllegalArgumentException("The password" 
+          + " doesn't match");
     }
     if (userRepository.findByUsername(userName).isPresent()) {
       throw new IllegalArgumentException("The username already exist");
