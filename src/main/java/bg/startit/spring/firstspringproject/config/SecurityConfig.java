@@ -15,8 +15,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
-        .formLogin()
-//        /**/.permitAll()
+        .csrf()
+        /**/.disable()
+        //.formLogin()
+        .httpBasic()
         /**/.and()
         .logout()
         /**/.and()
@@ -24,7 +26,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         /**/.antMatchers("/h2-console/**").anonymous()
         /**/.antMatchers("/explorer/**").authenticated()
         /**/.antMatchers("/users/**").authenticated()
-        /**/.antMatchers("/books/**").authenticated();
+        /**/.antMatchers("/books/**").authenticated()
+        /**/.antMatchers("/api/v1/**").authenticated();
 
   }
 
