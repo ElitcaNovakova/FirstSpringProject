@@ -7,19 +7,26 @@ import bg.startit.spring.firstspringproject.model.User;
 import bg.startit.spring.firstspringproject.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.PositiveOrZero;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@Validated
 public class UserController {
 
   private UserService userService;
@@ -30,8 +37,8 @@ public class UserController {
 
   @GetMapping
   public List<UserResponse> listUsers(
-      @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-      @RequestParam(name = "size", required = false, defaultValue = "20") int pageSize) {
+      @PositiveOrZero @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+      @Min(5) @Max(100) @RequestParam(name = "size", required = false, defaultValue = "20") int pageSize) {
 
     Page<User> users = userService.listUsers(PageRequest.of(pageNumber, pageSize));
 
@@ -46,7 +53,7 @@ public class UserController {
 
   // POST /api/v1/users
   @PostMapping
-  public User registerUser(CreateUserRequest createUserRequest) {
+  public User registerUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
     return userService.register(createUserRequest.getUsername(), createUserRequest.getPassword(),
         createUserRequest.getPassConfirmation());
   }

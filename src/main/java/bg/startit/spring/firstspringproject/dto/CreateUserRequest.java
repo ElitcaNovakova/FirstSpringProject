@@ -1,9 +1,21 @@
 package bg.startit.spring.firstspringproject.dto;
 
+import bg.startit.spring.firstspringproject.validation.ValidPassword;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class CreateUserRequest {
 
+  @NotNull
+  @Size(min = 5, max = 10)
+  @Pattern(regexp = "[a-zA-Z0-9]+")
   private String username;
+
+  @ValidPassword
   private String password;
+
+  @ValidPassword
   private String passConfirmation;
 
 
