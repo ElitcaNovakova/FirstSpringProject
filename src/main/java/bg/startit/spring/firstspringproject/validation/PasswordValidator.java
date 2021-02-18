@@ -5,7 +5,7 @@ import javax.validation.ConstraintValidatorContext;
 
 public class PasswordValidator implements ConstraintValidator<ValidPassword, String> {
 
-  public static final String SPECIAL_CHARACTERS = "!@#$%^&*()-+.,";
+  public static final String SPECIAL_CHARACTERS = "!@#$%^&*()-+.,_";
 
   @Override
   public boolean isValid(String value, ConstraintValidatorContext context) {
