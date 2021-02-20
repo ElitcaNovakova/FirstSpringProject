@@ -30,7 +30,7 @@ public class UserService implements UserDetailsService {
   public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
     // create admin user
     if (userRepository.count() == 0) {
-      register("admin", "admin", "admin");
+      register("admin", "admin", "admin",true);
     }
     Optional<User> user = userRepository.findByUsername(s);
     if (!user.isPresent()) {
@@ -64,7 +64,8 @@ public class UserService implements UserDetailsService {
     return userRepository.save(user);
   }
 
-  public User register(String userName, String userPassword, String passConfirmation) {
+  public User register(String userName, String userPassword, String passConfirmation,
+      boolean admin) {
     if (!userPassword.equals(passConfirmation)) {
       throw new IllegalArgumentException("The passwords doesn't match");
     }
@@ -75,6 +76,7 @@ public class UserService implements UserDetailsService {
     user.setUsername(userName);
     user.setPassword(passwordEncoder.encode(userPassword));
     user.setRegistrationTime(OffsetDateTime.now());
+    user.setAdmin(admin);
     return userRepository.save(user);
   }
   // which books were borrowed

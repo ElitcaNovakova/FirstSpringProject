@@ -59,7 +59,7 @@ public class UserController {
 
   public User registerUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
     return userService.register(createUserRequest.getUsername(), createUserRequest.getPassword(),
-        createUserRequest.getPassConfirmation());
+        createUserRequest.getPassConfirmation(),false);
   }
 
   // /api/v1/users -> from class @RequestMapping

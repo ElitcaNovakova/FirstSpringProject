@@ -38,7 +38,7 @@ class UserControllerTest {
 
   @BeforeEach
   void setUp() {
-    testUser = userService.register("testUser", "ABCdef_123", "ABCdef_123");
+    testUser = userService.register("testUser", "ABCdef_123", "ABCdef_123", false);
   }
 
   @AfterEach
@@ -88,7 +88,7 @@ class UserControllerTest {
   void given_valid_paging_When_list_users_Then_pass() throws Exception {
     // create 10 users
     for (int i = 0; i < 10; i++) {
-      userService.register("list" + i, "ABCdef_123", "ABCdef_123");
+      userService.register("list" + i, "ABCdef_123", "ABCdef_123", false);
     }
 
     mvc.perform(get("/api/v1/users")
@@ -97,20 +97,23 @@ class UserControllerTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andExpect(jsonPath("$.length()").value(5))
-        .andExpect(jsonPath("$[*].username", Matchers.containsInAnyOrder("list4", "list5", "list6", "list7", "list8")));
+        .andExpect(jsonPath("$[*].username",
+            Matchers.containsInAnyOrder("list4", "list5", "list6", "list7", "list8")));
     mvc.perform(get("/api/v1/users")
         .queryParam("size", "5"))
         .andExpect(status().isOk())
         .andDo(print())
         .andExpect(jsonPath("$.length()").value(5))
-        .andExpect(jsonPath("$[*].username", Matchers.containsInAnyOrder("testUser","list0","list1","list2","list3")));
+        .andExpect(jsonPath("$[*].username",
+            Matchers.containsInAnyOrder("testUser", "list0", "list1", "list2", "list3")));
     mvc.perform(get("/api/v1/users")
         .queryParam("page", "1")
         .queryParam("size", "8"))
         .andExpect(status().isOk())
         .andDo(print())
         .andExpect(jsonPath("$.length()").value(3))
-        .andExpect(jsonPath("$[*].username", Matchers.containsInAnyOrder("list7","list8","list9")));
+        .andExpect(
+            jsonPath("$[*].username", Matchers.containsInAnyOrder("list7", "list8", "list9")));
     mvc.perform(get("/api/v1/users")
         .queryParam("page", "2")
         .queryParam("size", "8"))
@@ -154,7 +157,6 @@ class UserControllerTest {
         .queryParam("size", "101"))
         .andExpect(status().isBadRequest());
   }
-
 
 
   @Test
