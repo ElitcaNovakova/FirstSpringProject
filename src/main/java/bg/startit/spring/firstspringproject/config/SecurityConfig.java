@@ -29,8 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         /**/.antMatchers("/h2-console/**").anonymous()
         /**/.antMatchers("/explorer/**").authenticated()
         /**/.antMatchers("/users/**").authenticated()
-        /**/.antMatchers("/books/**").authenticated()
-        /**/.antMatchers("/api/v1/**").authenticated();
+        /**/.antMatchers("/books/**").authenticated();
+    //  /**/.antMatchers("/api/v1/**").authenticated();
   }
 
   @Bean
