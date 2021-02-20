@@ -11,6 +11,8 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
   public boolean isValid(String value, ConstraintValidatorContext context) {
     //min 8 символа, да включва голяма и малка буква, цифра, специален символ, да няма интервали
     if (value == null || value.length() < 8) {
+      context.buildConstraintViolationWithTemplate("The password is too short")
+          .addConstraintViolation();
       return false;
     }
     boolean upper = false;
@@ -35,7 +37,26 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
       if (Character.isWhitespace(ch)) {
         whiteSpace = true;
       }
-
+    }
+    if (!upper) {
+      context.buildConstraintViolationWithTemplate("Must contain Upper Case letter")
+          .addConstraintViolation();
+    }
+    if (!lower) {
+      context.buildConstraintViolationWithTemplate("Must contain Lower Case letter")
+          .addConstraintViolation();
+    }
+    if (!digit) {
+      context.buildConstraintViolationWithTemplate("Must contain at least one digit")
+          .addConstraintViolation();
+    }
+    if (!special) {
+      context.buildConstraintViolationWithTemplate("Must contain at least one special character")
+          .addConstraintViolation();
+    }
+    if (whiteSpace) {
+      context.buildConstraintViolationWithTemplate("Must not contain whitespaces")
+          .addConstraintViolation();
     }
     return upper && lower && digit && special && (!whiteSpace);
   }
