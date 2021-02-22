@@ -34,6 +34,17 @@ public class User implements UserDetails {
   private OffsetDateTime lastLoginTime;
   @NotNull
   private OffsetDateTime registrationTime;
+  private boolean admin;
+
+  public boolean isAdmin() {
+    return admin;
+  }
+
+  public User setAdmin(boolean admin) {
+    this.admin = admin;
+    return this;
+  }
+
 
   public long getId() {
     return id;
@@ -92,7 +103,12 @@ public class User implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return Arrays.asList(new SimpleGrantedAuthority("user"));
+    if (admin) {
+      return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"),
+          new SimpleGrantedAuthority("ROLE_ADMIN"));
+    } else {
+      return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+    }
   }
 
   public String getPassword() {

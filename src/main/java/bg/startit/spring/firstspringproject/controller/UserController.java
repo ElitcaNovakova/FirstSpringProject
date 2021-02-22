@@ -7,6 +7,8 @@ import bg.startit.spring.firstspringproject.model.User;
 import bg.startit.spring.firstspringproject.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -36,6 +38,7 @@ public class UserController {
   }
 
   @GetMapping
+  @RolesAllowed("USER")
   public List<UserResponse> listUsers(
       @PositiveOrZero @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
       @Min(5) @Max(100) @RequestParam(name = "size", required = false, defaultValue = "20") int pageSize) {
@@ -53,9 +56,10 @@ public class UserController {
 
   // POST /api/v1/users
   @PostMapping
+
   public User registerUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
     return userService.register(createUserRequest.getUsername(), createUserRequest.getPassword(),
-        createUserRequest.getPassConfirmation());
+        createUserRequest.getPassConfirmation(),false);
   }
 
   // /api/v1/users -> from class @RequestMapping
@@ -63,13 +67,16 @@ public class UserController {
   // {userID} -> variable, that is coming/part from the URL
   // example: POST /api/v1/users/10
   @PostMapping("/{userID}")
-  public User updatePassword(@PathVariable("userID") long userID, ChangePasswordRequest request) {
+  @RolesAllowed("ADMIN")
+  public User updatePassword(@PathVariable("userID") long userID,
+      @RequestBody ChangePasswordRequest request) {
     return userService.changePassword(userID, request.getOldPassword(), request.getNewPassword());
   }
 
   // change password of the current user -> POST /api/v1/users/current ?
   @PostMapping("/current")
-  public User updateCurrentUserPassword(ChangePasswordRequest request,
+  @RolesAllowed("USER")
+  public User updateCurrentUserPassword(@RequestBody ChangePasswordRequest request,
       @AuthenticationPrincipal UserDetails user) {
     // alternatively to injecting the @AuthenticationPrincipal above, you can use the
     // construction below:

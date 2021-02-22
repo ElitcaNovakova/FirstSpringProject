@@ -38,7 +38,7 @@ class UserControllerTest {
 
   @BeforeEach
   void setUp() {
-    testUser = userService.register("testUser", "ABCdef_123", "ABCdef_123");
+    testUser = userService.register("testUser", "ABCdef_123", "ABCdef_123", false);
   }
 
   @AfterEach
@@ -67,7 +67,8 @@ class UserControllerTest {
         .accept(MediaType.APPLICATION_JSON)
         .content(
             "{\"username\":\"user1\",\"password\":\"abc\", \"passConfirmation\":\"abc\"}"))
-        .andExpect(status().isInternalServerError());
+        .andDo(print())
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -87,7 +88,7 @@ class UserControllerTest {
   void given_valid_paging_When_list_users_Then_pass() throws Exception {
     // create 10 users
     for (int i = 0; i < 10; i++) {
-      userService.register("list" + i, "ABCdef_123", "ABCdef_123");
+      userService.register("list" + i, "ABCdef_123", "ABCdef_123", false);
     }
 
     mvc.perform(get("/api/v1/users")
@@ -96,20 +97,23 @@ class UserControllerTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andExpect(jsonPath("$.length()").value(5))
-        .andExpect(jsonPath("$[*].id", Matchers.containsInAnyOrder(6, 7, 8, 9, 10)));
+        .andExpect(jsonPath("$[*].username",
+            Matchers.containsInAnyOrder("list4", "list5", "list6", "list7", "list8")));
     mvc.perform(get("/api/v1/users")
         .queryParam("size", "5"))
         .andExpect(status().isOk())
         .andDo(print())
         .andExpect(jsonPath("$.length()").value(5))
-        .andExpect(jsonPath("$[*].id", Matchers.containsInAnyOrder(1, 2, 3, 4, 5)));
+        .andExpect(jsonPath("$[*].username",
+            Matchers.containsInAnyOrder("testUser", "list0", "list1", "list2", "list3")));
     mvc.perform(get("/api/v1/users")
         .queryParam("page", "1")
         .queryParam("size", "8"))
         .andExpect(status().isOk())
         .andDo(print())
-        .andExpect(jsonPath("$.length()").value(2))
-        .andExpect(jsonPath("$[*].id", Matchers.containsInAnyOrder(9, 10)));
+        .andExpect(jsonPath("$.length()").value(3))
+        .andExpect(
+            jsonPath("$[*].username", Matchers.containsInAnyOrder("list7", "list8", "list9")));
     mvc.perform(get("/api/v1/users")
         .queryParam("page", "2")
         .queryParam("size", "8"))
@@ -156,10 +160,6 @@ class UserControllerTest {
 
 
   @Test
-  void updatePassword() {
-  }
-
-  @Test
   @WithAnonymousUser
   void given_anonymous_When_update_current_password_Then_fail_unauthorized() throws Exception {
     mvc.perform(post("/api/v1/users/current")
@@ -189,6 +189,6 @@ class UserControllerTest {
         .accept(MediaType.APPLICATION_JSON)
         .content(
             "{\"oldPassword\":\"ABCdef_123\",\"newPassword\":\"ABCdef_1234\"}"))
-        .andExpect(status().isForbidden());
+        .andExpect(status().isUnauthorized());
   }
 }
