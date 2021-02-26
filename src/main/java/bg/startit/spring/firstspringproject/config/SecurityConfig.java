@@ -19,6 +19,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http
         .csrf()
         /**/.disable()
+        .cors()
+        /**/.disable()
+        .headers()
+        /**/.frameOptions().sameOrigin().and()
         .formLogin()
         /**/.and()
         .httpBasic()
@@ -26,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .logout()
         /**/.and()
         .authorizeRequests()
-        /**/.antMatchers("/h2-console/**").anonymous()
+        /**/.antMatchers("/h2-console/**").permitAll()
         /**/.antMatchers("/explorer/**").authenticated()
         /**/.antMatchers("/users/**").authenticated()
         /**/.antMatchers("/books/**").authenticated();
