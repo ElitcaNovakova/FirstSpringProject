@@ -1,13 +1,17 @@
 package bg.startit.spring.firstspringproject.model;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -35,6 +39,20 @@ public class User implements UserDetails {
   @NotNull
   private OffsetDateTime registrationTime;
   private boolean admin;
+
+  // @ElementCollection can be used for primitive types - e.g. not entities
+  // It creates a separate table for the roles
+  @ElementCollection
+  private List<String> roles = new ArrayList(Arrays.asList("admin", "users"));
+
+  public List<String> getRoles() {
+    return roles;
+  }
+
+  public User setRoles(List<String> roles) {
+    this.roles = roles;
+    return this;
+  }
 
   public boolean isAdmin() {
     return admin;

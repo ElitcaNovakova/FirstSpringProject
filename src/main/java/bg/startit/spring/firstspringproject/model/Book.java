@@ -4,6 +4,7 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Book {
@@ -18,6 +19,27 @@ public class Book {
   private float price;
   private boolean available;
   private boolean funny;
+
+
+  // This create Many-to-One relation to User
+  @ManyToOne
+  private User user;
+
+  // Alternatively we can use
+  // @OneToOne (on a single object),
+  // @OneToMany (on array or collection of other @Entity objects)
+  // @ManyToMany (on array of collection of other @Entity objects)
+
+  // Avoid using @OneToMany and @ManyToMany - it loads more objects and makes you program SLOW
+  // In some cases you can't avoid it, so live with it.
+
+  // If you annotate one entity with the above annotation you create a bi-directional link
+  // (in the database) between two @Entity object.
+  // But it is not necessary *both* of those objects to link to each other. You may annotate
+  // only of the entities.
+  // For the reverse connection, you can use query methods of the repositories.
+
+
 
   @Override
   public boolean equals(Object o) {
